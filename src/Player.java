@@ -65,7 +65,7 @@ public class Player extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
+
         pressedKeys.add(e.getKeyCode());
     }
 

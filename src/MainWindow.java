@@ -14,7 +14,8 @@ public class MainWindow {
         player.setPlayerHeight(50);
         player.setPositionX(0);
         player.setPositionY(0);
-
+        player.setSpeed(5);
+//zf
         player.requestFocusInWindow();
         frame.add(player);
 
