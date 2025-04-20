@@ -3,6 +3,7 @@ import javax.swing.*;
 public class MainWindow {
     public static void main(String[] args) {
 
+
         JFrame frame = new JFrame("ruchomy gracz");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
