@@ -16,13 +16,17 @@ public class Player extends JPanel implements KeyListener {
     private Set<Integer> pressedKeys = new HashSet<>();
     Timer timer;
 
+    private double velocityY = 0;
+    private final double gravity = 0.5;
+    private final double maxFallSpeed = 10;
+    private boolean onGround = false;
 
     public Player(){
         setFocusable(true);
         requestFocusInWindow();
         addKeyListener(this);
 
-        timer = new Timer(16, new ActionListener() {
+        timer = new Timer(8, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 movePlayer();
@@ -32,20 +36,40 @@ public class Player extends JPanel implements KeyListener {
     }
 
     private void movePlayer(){
-        if (pressedKeys.contains(KeyEvent.VK_LEFT)) {
+
+        if (pressedKeys.contains(KeyEvent.VK_LEFT)||pressedKeys.contains(KeyEvent.VK_A)) {
             positionX -= speed;
         }
-        if (pressedKeys.contains(KeyEvent.VK_RIGHT)) {
+        if (pressedKeys.contains(KeyEvent.VK_RIGHT)||pressedKeys.contains(KeyEvent.VK_D)) {
             positionX += speed;
         }
-        if (pressedKeys.contains(KeyEvent.VK_UP)) {
-            positionY -= speed;
+        if (pressedKeys.contains(KeyEvent.VK_W) && onGround) {
+            velocityY = -10;
+            onGround = false;
         }
-        if (pressedKeys.contains(KeyEvent.VK_DOWN)) {
-            positionY += speed;
+
+        // GRAWITACJA
+        if (!onGround) {
+            velocityY += gravity;
+            if (velocityY > maxFallSpeed) {
+                velocityY = maxFallSpeed;
+            }
         }
-        positionX = Math.max(0, Math.min(getWidth() - playerWidth, positionX));
-        positionY = Math.max(0, Math.min(getHeight() - playerHeight, positionY));
+
+        positionY +=  velocityY;
+
+        // "Podłoga" – zatrzymaj spadanie
+        if (positionY + playerHeight >= getHeight()) {
+            positionY = getHeight() - playerHeight;
+            velocityY = 0;
+            onGround = true;
+        } else {
+            onGround = false;
+        }
+
+
+
+
 
         repaint();
     }
@@ -67,6 +91,10 @@ public class Player extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent e) {
 
         pressedKeys.add(e.getKeyCode());
+        if ((e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_SPACE) && onGround) {
+            velocityY = -10; // wartość skoku (ujemna, bo do góry)
+            onGround = false;
+        }
     }
 
     @Override
