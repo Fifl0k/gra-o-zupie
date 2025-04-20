@@ -5,7 +5,7 @@ public class MainWindow {
 
         JFrame frame = new JFrame("ruchomy gracz");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(2048, 89);
+        frame.setSize(500, 500);
 
         Player player = new Player();
 
@@ -18,6 +18,6 @@ public class MainWindow {
         frame.add(player);
 
         frame.setVisible(true);
-        player.movePlayer();
+
     }
 }

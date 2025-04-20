@@ -1,22 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 
-public class Player extends JPanel {
-
-
-    private int playerWidth = 0, playerHeight;
-private int positionX = 0, positionY =0;
+public class Player extends JPanel implements KeyListener {
 
 
-    public void movePlayer(){
-positionX += 5;
-//positionY +=5;
-        if (positionX > getWidth()) positionX = 0;
-  //      if (positionY > getHeight()) positionY = 0;
-repaint();
-}
+    private int playerWidth = 0, playerHeight = 0;
+    private int positionX = 0, positionY =0;
+
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -31,14 +27,46 @@ repaint();
     }
 Timer timer;
     public Player(){
+        setFocusable(true);
+        requestFocusInWindow();
+        addKeyListener(this);
+
          timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                movePlayer();
+
             }
         });
          timer.start();
     }
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+
+        int speed = 5; // jak szybko się porusza
+
+        switch (key) {
+            case KeyEvent.VK_LEFT:
+                positionX -= speed;
+                break;
+            case KeyEvent.VK_RIGHT:
+                positionX += speed;
+                break;
+            case KeyEvent.VK_UP:
+                positionY -= speed;
+                break;
+            case KeyEvent.VK_DOWN:
+                positionY += speed;
+                break;
+        }
+
+        repaint(); // odśwież panel po każdej zmianie
+    }
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
 
     public void setPlayerWidth(int playerWidth) {
         this.playerWidth = playerWidth;
