@@ -4,7 +4,7 @@ public class MainWindow {
     public static void main(String[] args) {
 
 
-        JFrame frame = new JFrame("ruchomy gracz");
+        JFrame frame = new JFrame("zupa z bobra");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
 
@@ -15,7 +15,7 @@ public class MainWindow {
         player.setPositionX(0);
         player.setPositionY(0);
 
-
+        player.requestFocusInWindow();
         frame.add(player);
 
         frame.setVisible(true);
