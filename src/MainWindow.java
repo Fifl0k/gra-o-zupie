@@ -15,7 +15,7 @@ public class MainWindow {
         player.setPositionX(0);
         player.setPositionY(0);
         player.setSpeed(5);
-
+//d
         player.requestFocusInWindow();
         frame.add(player);
 
