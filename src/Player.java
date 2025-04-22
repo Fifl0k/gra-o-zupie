@@ -7,105 +7,133 @@ import java.util.Set;
 public class Player {
 
     private int playerWidth = 50, playerHeight = 50;
-    private int positionX = 0, positionY =0;
+    private int positionX = 0, positionY = 0;
     private int speed = 5;
 
     private Set<Integer> pressedKeys = new HashSet<>();
-
-
-
 
     private double velocityY = 0;
     private final double gravity = 0.5;
     private final double maxFallSpeed = 10;
     private boolean onGround = false;
 
-    public Player(int positionX, int positionY, int width, int height) {
+    private int tileSize;
+    private int panelWidth, panelHeight;
+
+    public Player(int positionX, int positionY, int width, int height, int tileSize, int panelWidth, int panelHeight) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.playerWidth = width;
         this.playerHeight = height;
+        this.tileSize = tileSize;
+        this.panelWidth = panelWidth;
+        this.panelHeight = panelHeight;
+
+
     }
 
-    public void update(List<Platform> platforms, int panelHeight, int panelWidth) {
-        int prevX = positionX;
-        int prevY = positionY;
 
-        // Ruch poziomy
+    public void update(LevelMap map) {
+        // Sterowanie poziome
+        int moveX = 0;
         if (pressedKeys.contains(KeyEvent.VK_LEFT) || pressedKeys.contains(KeyEvent.VK_A)) {
-            positionX -= speed;
+            moveX -= speed;
         }
         if (pressedKeys.contains(KeyEvent.VK_RIGHT) || pressedKeys.contains(KeyEvent.VK_D)) {
-            positionX += speed;
+            moveX += speed;
         }
 
-        // Grawitacja i skok
+        if (moveX != 0) {
+            int top = positionY / tileSize;
+            int bottom = (positionY + playerHeight - 1) / tileSize;
+
+            if (moveX > 0) { // Przemieszczanie się w prawo
+                int right = (positionX + playerWidth - 1 + moveX) / tileSize;
+                boolean collision = false;
+                for (int y = top; y <= bottom; y++) {
+                    if (map.isSolid(right, y)) {
+                        collision = true;
+                        break;
+                    }
+                }
+                if (!collision) {
+                    positionX += moveX;
+                } else {
+                    positionX = right * tileSize - playerWidth;
+                }
+            } else { // Przemieszczanie się w lewo
+                int left = (positionX + moveX) / tileSize;
+                boolean collision = false;
+                for (int y = top; y <= bottom; y++) {
+                    if (map.isSolid(left, y)) {
+                        collision = true;
+                        break;
+                    }
+                }
+                if (!collision) {
+                    positionX += moveX;
+                } else {
+                    positionX = (left + 1) * tileSize;
+                }
+            }
+        }
+
+        // Skok
         if ((pressedKeys.contains(KeyEvent.VK_W) || pressedKeys.contains(KeyEvent.VK_SPACE)) && onGround) {
             velocityY = -10;
             onGround = false;
         }
+
+        // Grawitacja
         velocityY += gravity;
-        if (velocityY > maxFallSpeed) velocityY = maxFallSpeed;
-        positionY += velocityY;
+        if (velocityY > maxFallSpeed) {
+            velocityY = maxFallSpeed;
+        }
 
-        Rectangle playerBounds = new Rectangle(positionX, positionY, playerWidth, playerHeight);
-        onGround = false;
+        double newY = positionY + velocityY;
 
-        for (Platform platform : platforms) {
-            Rectangle platBounds = platform.getBounds();
-            if (playerBounds.intersects(platBounds)) {
-                Rectangle intersection = playerBounds.intersection(platBounds);
 
-                // Sprawdzamy kierunek kolizji
-                if (prevY + playerHeight <= platBounds.y) {
-                    // Kolizja od góry (lądowanie)
-                    positionY = platBounds.y - playerHeight;
+        // Kolizja - spadanie
+        if (velocityY > 0) {
+            int bottom = (int) (newY + playerHeight) / tileSize;
+            int left = (int) (positionX) / tileSize;
+            int right = (int) (positionX + playerWidth - 1) / tileSize;
+
+            for (int x = left; x <= right; x++) {
+                if (map.isSolid(x, bottom)) {
+                    newY = bottom * tileSize - playerHeight;
                     velocityY = 0;
                     onGround = true;
-                } else if (prevY >= platBounds.y + platBounds.height) {
-                    // Kolizja od dołu (sufit)
-                    positionY = platBounds.y + platBounds.height;
-                    velocityY = 0;
-                } else if (prevX + playerWidth <= platBounds.x) {
-                    // Kolizja z lewej strony
-                    positionX = platBounds.x - playerWidth;
-                } else if (prevX >= platBounds.x + platBounds.width) {
-                    // Kolizja z prawej strony
-                    positionX = platBounds.x + platBounds.width;
+                    break;
+                } else {
+                    onGround = false;
                 }
-
-                // Aktualizuj playerBounds po poprawkach
-                playerBounds = new Rectangle(positionX, positionY, playerWidth, playerHeight);
             }
         }
 
-        // Ograniczenia ekranu
-        if (positionY + playerHeight >= panelHeight) {
-            positionY = panelHeight - playerHeight;
-            velocityY = 0;
-            onGround = true;
+        // Kolizja - skok w sufit
+        else if (velocityY < 0) {
+            int top = (int) (newY) / tileSize;
+            int left = (int) (positionX) / tileSize;
+            int right = (int) (positionX + playerWidth - 1) / tileSize;
+
+            for (int x = left; x <= right; x++) {
+                if (map.isSolid(x, top)) {
+                    newY = (top + 1) * tileSize;
+                    velocityY = 0;
+                    break;
+                }
+            }
         }
-        if (positionX < 0) positionX = 0;
-        if (positionX + playerWidth > panelWidth) positionX = panelWidth - playerWidth;
-        if(positionY <0) {
-            positionY =0;
-            velocityY = 0;
-        }
-    }
 
-
-
-    protected void draw(Graphics g) {
-
-
-        g.setColor(Color.RED);
-
-
-        g.fillRect(positionX, positionY, playerWidth, playerHeight);
+        // Aktualizacja pozycji
+        positionY = (int) newY;
 
     }
-
-
+    public void draw(Graphics g) {
+        g.setColor(Color.RED); // Ustawienie koloru
+        g.fillRect(positionX, positionY, playerWidth, playerHeight); // Rysowanie prostokąta jako postaci
+    }
 
 
     public void keyPressed(KeyEvent e) {
@@ -116,6 +144,11 @@ public class Player {
         pressedKeys.remove(e.getKeyCode());
     }
 
+    public int getPositionX() {
+        return positionX;
+    }
 
-
+    public int getPositionY() {
+        return positionY;
+    }
 }

@@ -15,6 +15,7 @@ public class LevelMap {
                         break;
                     case 'P':
                         grid[y][x] = TileType.PLAYER_START;
+
                         break;
                     case '^':
                         grid[y][x] = TileType.SPIKE;
@@ -26,11 +27,22 @@ public class LevelMap {
             }
         }
     }
+    public boolean isSolid(int gridX, int gridY) {
+        if (gridY < 0 || gridY >= grid.length || gridX < 0 || gridX >= grid[0].length) {
+            return true; // poza mapą = ściana
+        }
+        return grid[gridY][gridX] == TileType.PLATFORM;
+    }
+
     public TileType getTile(int x, int y) {
         return grid[y][x];
     }
 
-    public int getWidth() { return grid[0].length; }
-    public int getHeight() { return grid.length; }
+    public int getWidth() {
+        return grid[0].length;
+    }
 
+    public int getHeight() {
+        return grid.length;
+    }
 }
