@@ -1,5 +1,6 @@
 public enum TileType {
     EMPTY,
     PLATFORM,
-    PLAYER_START
+    PLAYER_START,
+    SPIKE
 }

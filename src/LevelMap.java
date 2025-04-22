@@ -16,6 +16,9 @@ public class LevelMap {
                     case 'P':
                         grid[y][x] = TileType.PLAYER_START;
                         break;
+                    case '^':
+                        grid[y][x] = TileType.SPIKE;
+                        break;
                     default:
                         grid[y][x] = TileType.EMPTY;
                         break;
