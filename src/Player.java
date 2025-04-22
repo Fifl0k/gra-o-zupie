@@ -1,41 +1,33 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Player extends JPanel implements KeyListener {
+public class Player {
 
-
-    private int playerWidth = 0, playerHeight = 0;
+    private int playerWidth = 50, playerHeight = 50;
     private int positionX = 0, positionY =0;
     private int speed = 5;
+
     private Set<Integer> pressedKeys = new HashSet<>();
-    Timer timer;
+
+
+
 
     private double velocityY = 0;
     private final double gravity = 0.5;
     private final double maxFallSpeed = 10;
     private boolean onGround = false;
 
-    public Player(){
-        setFocusable(true);
-        requestFocusInWindow();
-        addKeyListener(this);
-
-        timer = new Timer(8, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                movePlayer();
-            }
-        });
-        timer.start();
+    public Player(int positionX, int positionY, int width, int height) {
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.playerWidth = width;
+        this.playerHeight = height;
     }
 
-    private void movePlayer(){
+    public void update(List<Platform> platforms, int panelHeight, int panelWidth){
 
         if (pressedKeys.contains(KeyEvent.VK_LEFT)||pressedKeys.contains(KeyEvent.VK_A)) {
             positionX -= speed;
@@ -43,11 +35,10 @@ public class Player extends JPanel implements KeyListener {
         if (pressedKeys.contains(KeyEvent.VK_RIGHT)||pressedKeys.contains(KeyEvent.VK_D)) {
             positionX += speed;
         }
-        if (pressedKeys.contains(KeyEvent.VK_W) && onGround) {
+        if ((pressedKeys.contains(KeyEvent.VK_W )|| pressedKeys.contains((KeyEvent.VK_SPACE))) && onGround) {
             velocityY = -10;
             onGround = false;
         }
-
         // GRAWITACJA
         if (!onGround) {
             velocityY += gravity;
@@ -59,25 +50,21 @@ public class Player extends JPanel implements KeyListener {
         positionY +=  velocityY;
 
         // "Podłoga" – zatrzymaj spadanie
-        if (positionY + playerHeight >= getHeight()) {
-            positionY = getHeight() - playerHeight;
+        if (positionY + playerHeight >= panelHeight) {
+            positionY = panelHeight - playerHeight;
             velocityY = 0;
             onGround = true;
         } else {
             onGround = false;
         }
+        if(positionX +playerWidth >= panelWidth){
+            positionX = panelWidth - playerWidth;
 
-
-
-
-
-        repaint();
+        }
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
 
+    protected void draw(Graphics g) {
 
 
         g.setColor(Color.RED);
@@ -87,48 +74,17 @@ public class Player extends JPanel implements KeyListener {
 
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
 
+
+
+    public void keyPressed(KeyEvent e) {
         pressedKeys.add(e.getKeyCode());
-        if ((e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_SPACE) && onGround) {
-            velocityY = -10; // wartość skoku (ujemna, bo do góry)
-            onGround = false;
-        }
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-    @Override
     public void keyReleased(KeyEvent e) {
         pressedKeys.remove(e.getKeyCode());
     }
 
 
 
-    public void setPlayerWidth(int playerWidth) {
-        this.playerWidth = playerWidth;
-    repaint();
-    }
-
-    public void setPlayerHeight(int playerHeight) {
-        this.playerHeight = playerHeight;
-    repaint();
-    }
-
-    public void setPositionX(int positionX) {
-        this.positionX = positionX;
-    repaint();
-    }
-
-    public void setPositionY(int positionY) {
-        this.positionY = positionY;
-        repaint();
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    repaint();
-    }
 }
