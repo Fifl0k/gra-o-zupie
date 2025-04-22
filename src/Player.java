@@ -1,6 +1,7 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +21,8 @@ public class Player {
     private int tileSize;
     private int panelWidth, panelHeight;
 
+    private Image playerImage;
+
     public Player(int positionX, int positionY, int width, int height, int tileSize, int panelWidth, int panelHeight) {
         this.positionX = positionX;
         this.positionY = positionY;
@@ -29,7 +32,7 @@ public class Player {
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
 
-
+        playerImage = new ImageIcon("player.png").getImage();
     }
 
 
@@ -129,7 +132,7 @@ public class Player {
                     velocityY = 0;
                     break;
                 }
-            }
+          }
         }
 
         // Aktualizacja pozycji

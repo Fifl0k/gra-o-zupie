@@ -35,14 +35,14 @@ public class GamePanel extends JPanel implements KeyListener {
                 "...................#............",
                 "........####.......#...#........",
                 "...................#............",
-                "............P....###............",
+                "..P..............###............",
                 "################################",
                 "################################",
                 "################################",
         };
 
         // Initialize map and load platforms
-        map = new LevelMap(layout);
+        map = new LevelMap(layout, 32);
         loadLevelFromMap(map);
 
         // Timer updates the game at a fixed interval
@@ -79,7 +79,7 @@ public class GamePanel extends JPanel implements KeyListener {
         for (Platform p : platforms) {
             p.draw(g);
         }
-
+        map.draw(g);
         // Rysowanie gracza
         if (player != null) {
             player.draw(g);
