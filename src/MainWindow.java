@@ -6,10 +6,10 @@ public class MainWindow {
         GamePanel gamePanel = new GamePanel();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(1040, 600);
         frame.add(gamePanel);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-       // frame.setResizable(false);
+       frame.setResizable(false);
     }
 }

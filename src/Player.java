@@ -87,6 +87,10 @@ public class Player {
         }
         if (positionX < 0) positionX = 0;
         if (positionX + playerWidth > panelWidth) positionX = panelWidth - playerWidth;
+        if(positionY <0) {
+            positionY =0;
+            velocityY = 0;
+        }
     }
 
 

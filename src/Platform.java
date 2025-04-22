@@ -18,12 +18,6 @@ public class Platform {
         return new Rectangle(x, y, width, height);
     }
 
-    public int getY() {
-        return y;
-    }
 
-    public int getHeight() {
-        return height;
-    }
 }
 
