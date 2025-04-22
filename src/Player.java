@@ -108,7 +108,13 @@ public class Player {
                 } else {
                     onGround = false;
                 }
+
             }
+        }
+
+
+        if(positionX<0){
+            positionX = 0;
         }
 
         // Kolizja - skok w sufit
