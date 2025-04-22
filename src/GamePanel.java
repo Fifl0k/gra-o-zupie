@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements KeyListener {
         loadLevelFromMap(map);
 
         // Timer updates the game at a fixed interval
-        timer = new Timer(16, e -> {
+        timer = new Timer(8, e -> {
             player.update(map);
             repaint();
         });
